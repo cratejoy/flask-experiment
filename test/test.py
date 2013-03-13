@@ -30,7 +30,7 @@ class TestMapper(flask_experiment.ExperimentMapper):
 mgr = flask_experiment.ExperimentManager(TestMapper())
 
 exp1_vars = [
-    flask_experiment.Variant("var1", enabled=True, control=True, weight=100),
+    flask_experiment.Variant("var1", enabled=True, control=True, weight=50),
     flask_experiment.Variant("var2", enabled=True, control=False, weight=50)
 ]
 
@@ -46,8 +46,6 @@ exp.setup_app(app)
 
 @app.route('/')
 def hello_world():
-    print "View function called"
-    #return 'Hello World!'
     return render_template("index.html")
 
 if __name__ == '__main__':
