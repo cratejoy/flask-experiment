@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: flask-experiment
+Version: HEAD
+Summary: Flask multvariate experiment testing extension
+Home-page: git@github.com:larkio/flask-experiment.git
+Author: Amir Elaguizy
+Author-email: amir@lark.io
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
