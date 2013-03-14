@@ -119,7 +119,10 @@ class ExperimentManager(object):
     def assign_variant(self, subj_id, exp):
         var = exp.choose_variant()
 
-        self.mapper.add_subject_experiment(subj_id, exp, var)
+        updated_var_name = self.mapper.add_subject_experiment(subj_id, exp, var)
+
+        if var.name != updated_var_name:
+            return exp.variant_map[var.name]
 
         return var
 
