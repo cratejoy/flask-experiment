@@ -230,7 +230,7 @@ class FlaskExperiment(object):
         Ensures that a cookie'd subject id exists
         """
 
-        #self._app.logger.debug("Init cookie hit for {}".format(request.path))
+        self._app.logger.debug("Init cookie hit for {}".format(request.path))
 
         # Don't bother setting the cookie on favicon hits
         # TODO: Make this more gooder
@@ -247,8 +247,8 @@ class FlaskExperiment(object):
         request.exp_cookie = exp_cookie
         request.experiments = self.mgr.get_subject_experiments(subj_id)
 
-        #self._app.logger.debug("Subject {} experiments {}".format(
-            #subj_id, request.experiments))
+        self._app.logger.debug("Subject {} experiments {}".format(
+            subj_id, request.experiments))
 
         request.exp_enabled = True
 
