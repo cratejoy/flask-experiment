@@ -55,8 +55,8 @@ class ExperimentJinjaLoader(BaseLoader):
 
     def get_source(self, environment, template):
         if request.exp_enabled:
-            #self._app.logger.debug("Getting source {} for experiments {}".format(
-                #template, request.experiments))
+            self._app.logger.debug("Getting source {} for experiments {}".format(
+                template, request.experiments))
 
             # 1) Check the non-control variants this subject is in for the template
             for exp, var in request.experiments:
@@ -65,18 +65,18 @@ class ExperimentJinjaLoader(BaseLoader):
                     tpl = self.get_variant_template(environment, template, exp, var)
 
                     if tpl:
-                        #self._app.logger.debug("Serving template {} from exp/variant {} {}".format(
-                            #template, exp.name, var.name))
+                        self._app.logger.debug("Serving template {} from exp/variant {} {}".format(
+                            template, exp.name, var.name))
                         return tpl
-                    #else:
-                        #self._app.logger.debug("NOT Serving template {} from exp/variant {} {}".format(
-                            #template, exp.name, var.name))
-        #else:
-            #self._app.logger.debug("Experiments not enabled {}".format(template))
+                    else:
+                        self._app.logger.debug("NOT Serving template {} from exp/variant {} {}".format(
+                            template, exp.name, var.name))
+        else:
+            self._app.logger.debug("Experiments not enabled {}".format(template))
 
         # 2) Check the control variants this subject is in for the template
         # 3) Just return the default template
-        #self._app.logger.debug("Serving default template {}".format(template))
+        self._app.logger.debug("Serving default template {}".format(template))
         return self.get_default_template(environment, template)
 
     def get_variant_template(self, environment, template, exp, var):
