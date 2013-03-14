@@ -1,4 +1,5 @@
 setup.py
+flask-experiment/__init__.py
 flask-experiment/flask_experiment.py
 flask_experiment.egg-info/PKG-INFO
 flask_experiment.egg-info/SOURCES.txt
