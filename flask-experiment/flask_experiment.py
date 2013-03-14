@@ -49,21 +49,34 @@ class ExperimentJinjaLoader(BaseLoader):
     """
     Template loader which maps to html templates from the correct test folders
     """
-    def __init__(self, flask_loader):
+    def __init__(self, app, flask_loader):
+        self._app = app
         self._flask_loader = flask_loader
 
     def get_source(self, environment, template):
         if request.exp_enabled:
+            #self._app.logger.debug("Getting source {} for experiments {}".format(
+                #template, request.experiments))
+
             # 1) Check the non-control variants this subject is in for the template
             for exp, var in request.experiments:
+                #self._app.logger.debug("Checking experiment {} {}".format(exp.name, var.name))
                 if not var.control:
                     tpl = self.get_variant_template(environment, template, exp, var)
 
                     if tpl:
+                        #self._app.logger.debug("Serving template {} from exp/variant {} {}".format(
+                            #template, exp.name, var.name))
                         return tpl
+                    #else:
+                        #self._app.logger.debug("NOT Serving template {} from exp/variant {} {}".format(
+                            #template, exp.name, var.name))
+        #else:
+            #self._app.logger.debug("Experiments not enabled {}".format(template))
 
         # 2) Check the control variants this subject is in for the template
         # 3) Just return the default template
+        #self._app.logger.debug("Serving default template {}".format(template))
         return self.get_default_template(environment, template)
 
     def get_variant_template(self, environment, template, exp, var):
@@ -152,7 +165,7 @@ class FlaskExperiment(object):
         self._app = app
 
         # 1) Redirect jinja template loading through us
-        self._app.jinja_loader = ExperimentJinjaLoader(self._app.jinja_loader)
+        self._app.jinja_loader = ExperimentJinjaLoader(self._app, self._app.jinja_loader)
 
         # 2) Set up our before and after request hooks
         self._app.before_request(self.before_request)
@@ -184,6 +197,8 @@ class FlaskExperiment(object):
             url_for=experiment_url_for
         )
 
+        rv.cache = None
+
     def before_request(self):
         """
         For a new incoming request ensure an id is set in a cookie which can be used to track
@@ -212,6 +227,8 @@ class FlaskExperiment(object):
         Ensures that a cookie'd subject id exists
         """
 
+        #self._app.logger.debug("Init cookie hit for {}".format(request.path))
+
         # Don't bother setting the cookie on favicon hits
         # TODO: Make this more gooder
         if request.path == '/favicon.ico/':
@@ -226,6 +243,10 @@ class FlaskExperiment(object):
 
         request.exp_cookie = exp_cookie
         request.experiments = self.mgr.get_subject_experiments(subj_id)
+
+        #self._app.logger.debug("Subject {} experiments {}".format(
+            #subj_id, request.experiments))
+
         request.exp_enabled = True
 
     def url_for_get_variant_static(self, path, exp, var):
