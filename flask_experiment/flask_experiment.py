@@ -55,8 +55,8 @@ class ExperimentJinjaLoader(BaseLoader):
 
     def get_source(self, environment, template):
         if request.exp_enabled:
-            self._app.logger.debug("Getting source {} for experiments {}".format(
-                template, request.experiments))
+            #self._app.logger.debug("Getting source {} for experiments {}".format(
+                #template, request.experiments))
 
             # 1) Check the non-control variants this subject is in for the template
             for exp, var in request.experiments:
@@ -65,18 +65,18 @@ class ExperimentJinjaLoader(BaseLoader):
                     tpl = self.get_variant_template(environment, template, exp, var)
 
                     if tpl:
-                        self._app.logger.debug("Serving template {} from exp/variant {} {}".format(
-                            template, exp.name, var.name))
+                        #self._app.logger.debug("Serving template {} from exp/variant {} {}".format(
+                            #template, exp.name, var.name))
                         return tpl
-                    else:
-                        self._app.logger.debug("NOT Serving template {} from exp/variant {} {}".format(
-                            template, exp.name, var.name))
-        else:
-            self._app.logger.debug("Experiments not enabled {}".format(template))
+                    #else:
+                        #self._app.logger.debug("NOT Serving template {} from exp/variant {} {}".format(
+                            #template, exp.name, var.name))
+        #else:
+            #self._app.logger.debug("Experiments not enabled {}".format(template))
 
         # 2) Check the control variants this subject is in for the template
         # 3) Just return the default template
-        self._app.logger.debug("Serving default template {}".format(template))
+        #self._app.logger.debug("Serving default template {}".format(template))
         return self.get_default_template(environment, template)
 
     def get_variant_template(self, environment, template, exp, var):
@@ -119,10 +119,7 @@ class ExperimentManager(object):
     def assign_variant(self, subj_id, exp):
         var = exp.choose_variant()
 
-        updated_var_name = self.mapper.add_subject_experiment(subj_id, exp, var)
-
-        if var.name != updated_var_name:
-            return exp.variant_map[var.name]
+        self.mapper.add_subject_experiment(subj_id, exp, var)
 
         return var
 
@@ -230,7 +227,7 @@ class FlaskExperiment(object):
         Ensures that a cookie'd subject id exists
         """
 
-        self._app.logger.debug("Init cookie hit for {}".format(request.path))
+        #self._app.logger.debug("Init cookie hit for {}".format(request.path))
 
         # Don't bother setting the cookie on favicon hits
         # TODO: Make this more gooder
@@ -247,8 +244,8 @@ class FlaskExperiment(object):
         request.exp_cookie = exp_cookie
         request.experiments = self.mgr.get_subject_experiments(subj_id)
 
-        self._app.logger.debug("Subject {} experiments {}".format(
-            subj_id, request.experiments))
+        #self._app.logger.debug("Subject {} experiments {}".format(
+            #subj_id, request.experiments))
 
         request.exp_enabled = True
 
