@@ -1,1 +1,1 @@
-flask-experiment
+flask_experiment

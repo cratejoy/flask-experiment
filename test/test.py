@@ -2,7 +2,7 @@ from flask import Flask, render_template
 from collections import defaultdict
 
 import sys
-sys.path.insert(0, 'flask-experiment')
+sys.path.insert(0, 'flask_experiment')
 import flask_experiment
 
 

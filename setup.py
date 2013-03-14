@@ -31,8 +31,8 @@ def parse_dependency_links(file_name):
     return dependency_links
 
 setup(
-    packages=['flask-experiment'],
-    name='flask-experiment',
+    packages=['flask_experiment'],
+    name='flask_experiment',
     url='git@github.com:larkio/flask-experiment.git',
     description=DESCRIPTION,
 
