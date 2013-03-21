@@ -59,7 +59,7 @@ class ExperimentJinjaLoader(BaseLoader):
                 #template, request.experiments))
 
             # 1) Check the non-control variants this subject is in for the template
-            for exp, var in request.experiments:
+            for exp, var in request.experiments.iteritems():
                 #self._app.logger.debug("Checking experiment {} {}".format(exp.name, var.name))
                 if not var.control:
                     tpl = self.get_variant_template(environment, template, exp, var)
@@ -104,6 +104,7 @@ class ExperimentManager(object):
         exp_map = self.mapper.get_subject_experiments(subj_id)
 
         exp_list = []
+        out_exp_map = {}
 
         for exp_name, exp in self.experiments.iteritems():
             if exp_name in exp_map:
@@ -112,9 +113,10 @@ class ExperimentManager(object):
             else:
                 var = self.assign_variant(subj_id, exp)
 
-            exp_list.append((exp, var))
+            #exp_list.append((exp, var))
+            out_exp_map[exp] = var
 
-        return exp_list
+        return out_exp_map
 
     def assign_variant(self, subj_id, exp):
         var = exp.choose_variant()
@@ -182,7 +184,7 @@ class FlaskExperiment(object):
                 return helpers.url_for(endpoint, **values)
 
             if request.exp_enabled:
-                for exp, var in request.experiments:
+                for exp, var in request.experiments.iteritems():
                     if not var.control:
                         path = self.url_for_get_variant_static(values['filename'], exp, var)
 
@@ -257,3 +259,18 @@ class FlaskExperiment(object):
 
         if os.path.exists(full_path):
             return os.path.join(exp.name, var.name, path)
+
+
+def in_variant(exp_name, *args):
+    """
+    Returns true if the current subject is in any of the listed variants for exp_name
+    """
+    if not request.exp_enabled:
+        return False
+
+    for exp, var in request.experiments.iteritems():
+        if exp.name == exp_name:
+            if var.name in args:
+                return True
+
+    return False

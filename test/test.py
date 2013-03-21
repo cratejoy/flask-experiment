@@ -48,6 +48,9 @@ exp.setup_app(app)
 
 @app.route('/')
 def hello_world():
+    print "Var1", flask_experiment.in_variant("exp1", "var1")
+    print "Var2", flask_experiment.in_variant("exp1", "var2")
+    print "Either", flask_experiment.in_variant("exp1", "var1", "var2")
     return render_template("index.html")
 
 if __name__ == '__main__':
