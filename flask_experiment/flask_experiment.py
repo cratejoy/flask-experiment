@@ -40,6 +40,14 @@ class ExperimentMapper(object):
         """
         pass
 
+    def update_subject_experiments(self, subj_id, set_exp, set_var):
+        """
+        - subj_id - Unique identifier of test subject
+        - exp - Experiment object
+        - var - Variant object
+        """
+        pass
+
 """
 PRIVATE API
 """
@@ -100,10 +108,15 @@ class ExperimentManager(object):
     def add_experiment(self, experiment):
         self.experiments[experiment.name] = experiment
 
+    def update_subject_experiments(self, subj_id, set_exp, set_var):
+        exp = self.experiments[set_exp]
+        var = exp.variant_map[set_var]
+
+        self.mapper.update_subject_experiments(subj_id, exp, var)
+
     def get_subject_experiments(self, subj_id):
         exp_map = self.mapper.get_subject_experiments(subj_id)
 
-        exp_list = []
         out_exp_map = {}
 
         for exp_name, exp in self.experiments.iteritems():
@@ -243,8 +256,15 @@ class FlaskExperiment(object):
             subj_id = uuid4().hex
             exp_cookie['id'] = subj_id
 
+        set_exp = request.args.get('experiment')
+        set_var = request.args.get('variant')
+
         request.exp_cookie = exp_cookie
         request.experiments = self.mgr.get_subject_experiments(subj_id)
+
+        if set_exp and set_var:
+            self.mgr.update_subject_experiments(subj_id, set_exp, set_var)
+            request.experiments = self.mgr.get_subject_experiments(subj_id)
 
         #self._app.logger.debug("Subject {} experiments {}".format(
             #subj_id, request.experiments))

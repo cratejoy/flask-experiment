@@ -28,6 +28,15 @@ class TestMapper(flask_experiment.ExperimentMapper):
         print "Adding subject to", exp.name, var.name
         self.subj_map[subj_id][exp.name] = var.name
 
+    def update_subject_experiments(self, subj_id, exp, var):
+        """
+        - subj_id - Unique identifier of test subject
+        - exp - Experiment object
+        - var - Variant object
+        """
+        print "Updating subject to", exp.name, var.name
+        self.subj_map[subj_id][exp.name] = var.name
+
 
 mgr = flask_experiment.ExperimentManager(TestMapper())
 
