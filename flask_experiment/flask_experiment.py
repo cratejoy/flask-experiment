@@ -140,11 +140,12 @@ class ExperimentManager(object):
 
 
 class Experiment(object):
-    def __init__(self, name, enabled, variants):
+    def __init__(self, name, enabled, variants, index=None):
         self.name = name
         self.enabled = enabled
         self.variants = variants
         self.variant_map = {v.name: v for v in variants}
+        self.index = index
 
         self.enabled_weight = 0
         for v in variants:
