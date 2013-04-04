@@ -120,14 +120,17 @@ class ExperimentManager(object):
         out_exp_map = {}
 
         for exp_name, exp in self.experiments.iteritems():
-            if exp_name in exp_map:
-                var_name = exp_map[exp_name]
-                var = exp.variant_map[var_name]
-            else:
-                var = self.assign_variant(subj_id, exp)
+            try:
+                if exp_name in exp_map:
+                    var_name = exp_map[exp_name]
+                    var = exp.variant_map[var_name]
+                else:
+                    var = self.assign_variant(subj_id, exp)
 
-            #exp_list.append((exp, var))
-            out_exp_map[exp] = var
+                #exp_list.append((exp, var))
+                out_exp_map[exp] = var
+            except:
+                pass
 
         return out_exp_map
 
