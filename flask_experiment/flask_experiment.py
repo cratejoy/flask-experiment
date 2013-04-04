@@ -12,6 +12,7 @@ from uuid import uuid4
 from jinja2 import BaseLoader
 from werkzeug.contrib.securecookie import SecureCookie
 from flask import request, helpers
+from cache import ExperimentTemplateCache
 
 
 """
@@ -195,8 +196,8 @@ class FlaskExperiment(object):
 
         # 3) Disable caching of templates so we can send a unique template to each subject
         opts = dict(self._app.jinja_options)
-        opts['cache_size'] = 0
-        self._app.jinja_options = opts
+        #opts['cache_size'] = 0
+        #self._app.jinja_options = opts
 
         # 4) Override url_for so that we can redirect statics
         def experiment_url_for(endpoint, **values):
@@ -219,7 +220,7 @@ class FlaskExperiment(object):
             url_for=experiment_url_for
         )
 
-        rv.cache = None
+        rv.cache = ExperimentTemplateCache(opts['cache_size'] if 'cache_size' in opts else 1000)
 
     def before_request(self):
         """
