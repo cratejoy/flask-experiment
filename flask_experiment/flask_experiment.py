@@ -109,10 +109,13 @@ class ExperimentManager(object):
         self.experiments[experiment.name] = experiment
 
     def update_subject_experiments(self, subj_id, set_exp, set_var):
-        exp = self.experiments[set_exp]
-        var = exp.variant_map[set_var]
+        try:
+            exp = self.experiments[set_exp]
+            var = exp.variant_map[set_var]
 
-        self.mapper.update_subject_experiments(subj_id, exp, var)
+            self.mapper.update_subject_experiments(subj_id, exp, var)
+        except:
+            self._app.logger.exception("Failed to set experiment, exp or variant not in running set")
 
     def get_subject_experiments(self, subj_id):
         exp_map = self.mapper.get_subject_experiments(subj_id)
