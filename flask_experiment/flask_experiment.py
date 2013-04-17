@@ -10,6 +10,7 @@ import random
 import os
 from uuid import uuid4
 from jinja2 import BaseLoader
+from jinja2.bccache import MemcachedBytecodeCache
 from werkzeug.contrib.securecookie import SecureCookie
 from flask import request, helpers
 from cache import ExperimentTemplateCache
@@ -184,7 +185,7 @@ class FlaskExperiment(object):
     def __init__(self, mgr):
         self.mgr = mgr
 
-    def setup_app(self, app):
+    def setup_app(self, app, mc_client=None):
         self._app = app
 
         # 1) Redirect jinja template loading through us
@@ -221,6 +222,8 @@ class FlaskExperiment(object):
         )
 
         rv.cache = ExperimentTemplateCache(opts['cache_size'] if 'cache_size' in opts else 1000)
+        if mc_client is not None:
+            rv.bytecode_cache = MemcachedBytecodeCache(mc_client)
 
     def before_request(self):
         """
