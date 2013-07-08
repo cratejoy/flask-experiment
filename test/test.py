@@ -47,6 +47,27 @@ exp1_vars = [
 
 mgr.add_experiment(flask_experiment.Experiment("exp1", True, exp1_vars))
 
+exp2_vars = [
+    flask_experiment.Variant("e2_control", enabled=True, control=True, weight=50),
+    flask_experiment.Variant("e2_var2", enabled=True, control=False, weight=50)
+]
+
+mgr.add_experiment(flask_experiment.Experiment("exp2", True, exp2_vars))
+
+exp3_vars = [
+    flask_experiment.Variant("e3_control", enabled=True, control=True, weight=50),
+    flask_experiment.Variant("e3_var2", enabled=True, control=False, weight=50)
+]
+
+mgr.add_experiment(flask_experiment.Experiment("exp3", True, exp3_vars))
+
+exp4_vars = [
+    flask_experiment.Variant("e4_control", enabled=True, control=True, weight=50),
+    flask_experiment.Variant("e4_var2", enabled=True, control=False, weight=50)
+]
+
+mgr.add_experiment(flask_experiment.Experiment("exp4", True, exp4_vars))
+
 
 exp = flask_experiment.FlaskExperiment(mgr)
 app = Flask(__name__)
@@ -57,10 +78,11 @@ exp.setup_app(app)
 
 @app.route('/')
 def hello_world():
-    print "Var1", flask_experiment.in_variant("exp1", "var1")
-    print "Var2", flask_experiment.in_variant("exp1", "var2")
-    print "Either", flask_experiment.in_variant("exp1", "var1", "var2")
-    return render_template("index.html")
+    print "Exp 1Var1", flask_experiment.in_variant("exp1", "var1")
+    print "Exp 1Var2", flask_experiment.in_variant("exp1", "var2")
+    print "Exp1 Either", flask_experiment.in_variant("exp1", "var1", "var2")
+
+    return render_template("exp2/exp2.html")
 
 if __name__ == '__main__':
     app.run(debug=True)

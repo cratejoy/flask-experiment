@@ -105,14 +105,16 @@ class ExperimentJinjaLoader(BaseLoader):
 class ExperimentManager(object):
     def __init__(self, mapper):
         self.mapper = mapper
-        self.experiments = {}
+        self.experiment_map = {}
+        self.experiment_list = []
 
     def add_experiment(self, experiment):
-        self.experiments[experiment.name] = experiment
+        self.experiment_map[experiment.name] = experiment
+        self.experiment_list.append(experiment)
 
     def update_subject_experiments(self, subj_id, set_exp, set_var):
         try:
-            exp = self.experiments[set_exp]
+            exp = self.experiment_map[set_exp]
             var = exp.variant_map[set_var]
 
             self.mapper.update_subject_experiments(subj_id, exp, var)
@@ -124,13 +126,25 @@ class ExperimentManager(object):
 
         out_exp_map = {}
 
-        for exp_name, exp in self.experiments.iteritems():
+        exp_list = list(self.experiment_list)
+        random.shuffle(exp_list)
+
+        has_exp = False
+
+        for exp in exp_list:
             try:
+                exp_name = exp.name
+
                 if exp_name in exp_map:
                     var_name = exp_map[exp_name]
                     var = exp.variant_map[var_name]
                 else:
-                    var = self.assign_variant(subj_id, exp)
+                    if not has_exp:
+                        var = self.assign_variant(subj_id, exp)
+                        if not var.control:
+                            has_exp = True
+                    else:
+                        var = random.choice(exp.controls)
 
                 #exp_list.append((exp, var))
                 out_exp_map[exp] = var
@@ -154,6 +168,7 @@ class Experiment(object):
         self.variants = variants
         self.variant_map = {v.name: v for v in variants}
         self.index = index
+        self.controls = [v for v in variants if v.control]
 
         self.enabled_weight = 0
         for v in variants:
