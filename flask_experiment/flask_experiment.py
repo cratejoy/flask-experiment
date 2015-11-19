@@ -197,6 +197,8 @@ class Variant(object):
 
 
 class FlaskExperiment(object):
+    FLASK_EXPERIMENT_COOKIE_NAME = 'fe_exp_session'
+
     def __init__(self, mgr):
         self.mgr = mgr
 
@@ -257,7 +259,7 @@ class FlaskExperiment(object):
 
             if exp_cookie.should_save:
                 try:
-                    exp_cookie.save_cookie(response)
+                    exp_cookie.save_cookie(response, key=self.FLASK_EXPERIMENT_COOKIE_NAME)
                 except:
                     self._app.logger.exception("Failed saving cookie")
 
@@ -276,7 +278,7 @@ class FlaskExperiment(object):
             request.exp_enabled = False
             return
 
-        exp_cookie = SecureCookie.load_cookie(request, secret_key=self._app.secret_key)
+        exp_cookie = SecureCookie.load_cookie(request, key=self.FLASK_EXPERIMENT_COOKIE_NAME, secret_key=self._app.secret_key)
         subj_id = exp_cookie.get('id')
         if not subj_id:
             subj_id = uuid4().hex
