@@ -4,9 +4,15 @@ from jinja2.utils import LRUCache
 
 class ExperimentTemplateCache(LRUCache):
     def experiment_key(self, key):
+        # newer versions of jinja pass this key as a tuple,
+        # but we want the name of the jinja file, which
+        # is the last item in the tuple
+        if key and isinstance(key, tuple):
+            key = key[-1]
+
         if request.exp_enabled:
             key = ":".join(["{}:{}".format(
-                exp.name, var.name) for exp, var in request.experiments.iteritems()]) + ":" + key
+                exp.name, var.name) for exp, var in request.experiments.items()]) + ":" + key
 
         return key
 
